@@ -64,7 +64,7 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
     if (!_contentView) {
         MXParallaxView *contentView = [MXParallaxView new];
         contentView.parent = self;
-        contentView.clipsToBounds = YES;
+        contentView.clipsToBounds = NO;
         _contentView = contentView;
     }
     return _contentView;
@@ -129,7 +129,7 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
     
     [self.view removeFromSuperview];
     [self.contentView addSubview:self.view];
-    
+    /*
     self.view.translatesAutoresizingMaskIntoConstraints = NO;
     
     switch (self.mode) {
@@ -153,6 +153,7 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
             [self setCenterModeConstraints];
             break;
     }
+     */
 }
 
 - (void)setCenterModeConstraints {
