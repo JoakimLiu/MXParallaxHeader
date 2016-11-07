@@ -210,7 +210,7 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
 
 - (void)layoutContentView {
     CGFloat minimumHeight = MIN(self.minimumHeight, self.height);
-    CGFloat relativeYOffset = self.scrollView.contentOffset.y + self.scrollView.contentInset.top - self.height;
+    CGFloat relativeYOffset = self.scrollView.contentOffset.y + self.scrollView.contentInset.top - self.height - 44.0;
     CGFloat relativeHeight  = -relativeYOffset;
     
     self.contentView.frame = (CGRect){
@@ -244,6 +244,10 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
         if ([keyPath isEqualToString:NSStringFromSelector(@selector(contentOffset))]) {
             [self layoutContentView];
             
+            if ([self.delegate respondsToSelector:@selector(parallaxHeaderDidScroll:minimumHeight:)]) {
+                [self.delegate parallaxHeaderDidScroll:_scrollView minimumHeight:self.minimumHeight];
+            }
+
             if ([self.delegate respondsToSelector:@selector(parallaxHeaderDidScroll:)]) {
                 [self.delegate parallaxHeaderDidScroll:self];
             }

@@ -109,6 +109,17 @@ typedef NS_ENUM(NSInteger, MXParallaxHeaderMode) {
  */
 - (void)parallaxHeaderDidScroll:(MXParallaxHeader *)parallaxHeader;
 
+/**
+ Tells other pagerview update subviews frame
+ 
+ example:
+ CGFloat gap = - scrollView.contentOffset.y - minimumHeight;
+ someSubView.y = someSubViewPrimitiveOriginY - gap;
+ 
+ @param scrollView scrollView description
+ @param minimumHeight minimumHeight description
+ */
+- (void)parallaxHeaderDidScroll:(UIScrollView *)scrollView minimumHeight:(CGFloat)minimumHeight;
 @end
 
 DEPRECATED_MSG_ATTRIBUTE("Use the MXParallaxHeader's delegate property instead.")
