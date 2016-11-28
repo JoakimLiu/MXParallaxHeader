@@ -189,6 +189,10 @@ static void * const kMXScrollViewKVOContext = (void*)&kMXScrollViewKVOContext;
     }
 }
 
+- (void)forceSetDefaultLockStatus {
+    _lock = NO;
+}
+
 #pragma mark Scrolling views handlers
 
 - (void)addObservedView:(UIScrollView *)scrollView {

@@ -54,6 +54,7 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
 
 @implementation MXParallaxHeader {
     BOOL _isObserving;
+    BOOL _ignoreObserver;
 }
 
 @synthesize contentView = _contentView;
@@ -118,6 +119,23 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
 - (CGFloat)progress {
     CGFloat div = self.height - self.minimumHeight;
     return (self.contentView.frame.size.height - self.minimumHeight) / (div? : self.height);
+}
+
+- (void)updateHeight:(CGFloat)height oldHeight:(CGFloat)oldHeight {
+    _ignoreObserver = YES;
+    
+    //Adjust content offset
+    CGPoint offset = self.scrollView.contentOffset;
+    if (offset.y != -oldHeight) {
+        [self adjustScrollViewTopInsetWhenUpdateHeight:self.scrollView.contentInset.top - oldHeight + height];
+        _height = height;
+        [self updateConstraints];
+        [self layoutContentView];
+    } else {
+        [self setHeight:height];
+    }
+    
+    _ignoreObserver = NO;
 }
 
 #pragma mark Constraints
@@ -210,7 +228,7 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
 
 - (void)layoutContentView {
     CGFloat minimumHeight = MIN(self.minimumHeight, self.height);
-    CGFloat relativeYOffset = self.scrollView.contentOffset.y + self.scrollView.contentInset.top - self.height - 44.0;
+    CGFloat relativeYOffset = self.scrollView.contentOffset.y + self.scrollView.contentInset.top - self.height;
     CGFloat relativeHeight  = -relativeYOffset;
     
     self.contentView.frame = (CGRect){
@@ -234,11 +252,35 @@ static void * const kMXParallaxHeaderKVOContext = (void*)&kMXParallaxHeaderKVOCo
     self.scrollView.contentInset = inset;
 }
 
+- (void)adjustScrollViewTopInsetWhenUpdateHeight:(CGFloat)top {
+    UIEdgeInsets inset = self.scrollView.contentInset;
+    
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    // set lockstauts default
+    if ([self.scrollView respondsToSelector:@selector(forceSetDefaultLockStatus)]) {
+        [self.scrollView performSelector:@selector(forceSetDefaultLockStatus) withObject:nil];
+    }
+#pragma clang diagnostic pop
+    
+    //Adjust content offset
+    CGPoint offset = self.scrollView.contentOffset;
+    offset.y += inset.top - top;
+    self.scrollView.contentOffset = offset;
+    
+    //Adjust content inset
+    inset.top = top;
+    self.scrollView.contentInset = inset;
+}
+
 #pragma mark KVO
 
 //This is where the magic happens...
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context {
-    
+    if (_ignoreObserver) {
+        return;
+    }
+
     if (context == kMXParallaxHeaderKVOContext) {
         
         if ([keyPath isEqualToString:NSStringFromSelector(@selector(contentOffset))]) {

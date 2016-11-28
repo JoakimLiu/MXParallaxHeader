@@ -54,6 +54,11 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, weak, nullable) IBOutlet id<MXScrollViewDelegate> delegate;
 
+/**
+ force set lock stauts NO when update parallaxHeader height
+ */
+- (void)forceSetDefaultLockStatus;
+
 @end
 
 NS_ASSUME_NONNULL_END

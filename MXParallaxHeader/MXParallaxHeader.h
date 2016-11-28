@@ -136,6 +136,13 @@ DEPRECATED_MSG_ATTRIBUTE("Use the MXParallaxHeader's delegate property instead."
  */
 @property (nonatomic, strong) IBOutlet MXParallaxHeader *parallaxHeader;
 
+/**
+ update height
+ 
+ @param height height description
+ @param oldHeight oldHeight description
+ */
+- (void)updateHeight:(CGFloat)height oldHeight:(CGFloat)oldHeight;
 @end
 
 NS_ASSUME_NONNULL_END
